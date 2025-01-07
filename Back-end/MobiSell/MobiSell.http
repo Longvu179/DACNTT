@@ -1,0 +1,6 @@
+@MobiSell_HostAddress = http://localhost:5018
+
+GET {{MobiSell_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
