@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MobiSell")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8cca3a86a5af2f7fdb89c66e3262c78598b7e8f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39450675503e9461113712c7296a4baba0706dcc")]
 [assembly: System.Reflection.AssemblyProductAttribute("MobiSell")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MobiSell")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

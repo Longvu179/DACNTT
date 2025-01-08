@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,7 @@ namespace MobiSell.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
+            product.DayCreate = DateTime.Now;
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
@@ -103,6 +105,41 @@ namespace MobiSell.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Product>>> SearchProduct(string keyword)
+        {
+            return await _context.Products.Where(p => p.Name.Contains(keyword)).ToListAsync();
+        }
+
+        [Authorize]
+        [HttpPost("addToCart")]
+        public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int productId)
+        {
+            var item = await _context.Cart_Items.FirstAsync(i => i.CartId == cartId && i.ProductId == productId);
+            if (item == null)
+            {
+                var cartItem = new Cart_Item()
+                {
+                    CartId = cartId,
+                    ProductId = productId,
+                    Quantity = 1,
+                    CreatedAt = DateTime.Now,
+                    UpdateAt = DateTime.Now
+                };
+
+                _context.Cart_Items.Add(cartItem);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                item.Quantity++;
+                item.UpdateAt = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
         }
     }
 }
