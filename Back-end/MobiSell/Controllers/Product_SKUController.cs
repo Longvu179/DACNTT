@@ -12,47 +12,47 @@ namespace MobiSell.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WishListsController : ControllerBase
+    public class Product_SKUController : ControllerBase
     {
         private readonly MobiSellContext _context;
 
-        public WishListsController(MobiSellContext context)
+        public Product_SKUController(MobiSellContext context)
         {
             _context = context;
         }
 
-        // GET: api/WishLists
+        // GET: api/Product_SKU
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WishList>>> GetWishLists()
+        public async Task<ActionResult<IEnumerable<Product_SKU>>> GetProduct_SKUs()
         {
-            return await _context.WishLists.ToListAsync();
+            return await _context.Product_SKUs.ToListAsync();
         }
 
-        // GET: api/WishLists/5
+        // GET: api/Product_SKU/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<WishList>> GetWishList(int id)
+        public async Task<ActionResult<Product_SKU>> GetProduct_SKU(int id)
         {
-            var wishList = await _context.WishLists.FindAsync(id);
+            var product_SKU = await _context.Product_SKUs.FindAsync(id);
 
-            if (wishList == null)
+            if (product_SKU == null)
             {
                 return NotFound();
             }
 
-            return wishList;
+            return product_SKU;
         }
 
-        // PUT: api/WishLists/5
+        // PUT: api/Product_SKU/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWishList(int id, WishList wishList)
+        public async Task<IActionResult> PutProduct_SKU(int id, Product_SKU product_SKU)
         {
-            if (id != wishList.Id)
+            if (id != product_SKU.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(wishList).State = EntityState.Modified;
+            _context.Entry(product_SKU).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace MobiSell.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!WishListExists(id))
+                if (!Product_SKUExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
-        // POST: api/WishLists
+        // POST: api/Product_SKU
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<WishList>> PostWishList(WishList wishList)
+        public async Task<ActionResult<Product_SKU>> PostProduct_SKU(Product_SKU product_SKU)
         {
-            _context.WishLists.Add(wishList);
+            _context.Product_SKUs.Add(product_SKU);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWishList", new { id = wishList.Id }, wishList);
+            return CreatedAtAction("GetProduct_SKU", new { id = product_SKU.Id }, product_SKU);
         }
 
-        // DELETE: api/WishLists/5
+        // DELETE: api/Product_SKU/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWishList(int id)
+        public async Task<IActionResult> DeleteProduct_SKU(int id)
         {
-            var wishList = await _context.WishLists.FindAsync(id);
-            if (wishList == null)
+            var product_SKU = await _context.Product_SKUs.FindAsync(id);
+            if (product_SKU == null)
             {
                 return NotFound();
             }
 
-            _context.WishLists.Remove(wishList);
+            _context.Product_SKUs.Remove(product_SKU);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool WishListExists(int id)
+        private bool Product_SKUExists(int id)
         {
-            return _context.WishLists.Any(e => e.Id == id);
+            return _context.Product_SKUs.Any(e => e.Id == id);
         }
     }
 }

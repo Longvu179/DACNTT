@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobiSell.Data;
 using MobiSell.Models;
+using MobiSell.Services;
 
 namespace MobiSell.Controllers
 {
@@ -16,10 +17,12 @@ namespace MobiSell.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly MobiSellContext _context;
+        private readonly IFileService _fileService;
 
-        public ProductsController(MobiSellContext context)
+        public ProductsController(MobiSellContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         // GET: api/Products
@@ -113,33 +116,70 @@ namespace MobiSell.Controllers
             return await _context.Products.Where(p => p.Name.Contains(keyword)).ToListAsync();
         }
 
-        [Authorize]
         [HttpPost("addToCart")]
-        public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int productId)
+        public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int product_SKUId)
         {
-            var item = await _context.Cart_Items.FirstAsync(i => i.CartId == cartId && i.ProductId == productId);
+            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
+            var product = await _context.Product_SKUs.FindAsync(product_SKUId); 
             if (item == null)
             {
                 var cartItem = new Cart_Item()
                 {
                     CartId = cartId,
-                    ProductId = productId,
+                    Product_SKUId = product_SKUId,
                     Quantity = 1,
-                    CreatedAt = DateTime.Now,
-                    UpdateAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow,
+                    UpdateAt = DateTime.UtcNow
                 };
 
                 _context.Cart_Items.Add(cartItem);
                 await _context.SaveChangesAsync();
-                return NoContent();
+                return Ok("Add to cart success!");
             }
-            else
+            else if(item.Quantity < product.Quantity)
             {
                 item.Quantity++;
-                item.UpdateAt = DateTime.Now;
+                item.UpdateAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 return NoContent();
             }
+            return NoContent();
+        }
+
+        [HttpDelete("removeFromCart")]
+        public async Task<IActionResult> RemoveFromCart(int cartId, int product_SKUId)
+        {
+            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            
+            _context.Cart_Items.Remove(item);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPost("wishlist")]
+        public async Task<ActionResult<WishList>> WishList(string userId, int productId)
+        {
+            var wishList = await _context.WishLists.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
+            if (wishList == null)
+            {
+                var newWishList = new WishList()
+                {
+                    UserId = userId,
+                    ProductId = productId,
+                    CreatedAt = DateTime.UtcNow,
+                };
+
+                _context.WishLists.Add(newWishList);
+                await _context.SaveChangesAsync();
+                return Ok("Add to wishlist success!");
+            }
+            _context.WishLists.Remove(wishList);
+            await _context.SaveChangesAsync();
+            return Ok("Un wishlist success!");
         }
     }
 }

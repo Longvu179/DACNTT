@@ -42,8 +42,6 @@ namespace MobiSell.Controllers
             return cart_Item;
         }
 
-        // PUT: api/Cart_Item/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCart_Item(int id, int amount)
         {
@@ -99,6 +97,50 @@ namespace MobiSell.Controllers
         private bool Cart_ItemExists(int id)
         {
             return _context.Cart_Items.Any(e => e.Id == id);
+        }
+
+        [HttpPost("Purchase")]
+        public async Task<ActionResult<Cart_Item>> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address)
+        {
+            var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
+            var order = new Order
+            {
+                UserId = userId,
+                ReceiverName = name,
+                ReceiverNumber = phoneNumber,
+                OrderDate = DateTime.Now,
+                payment = PaymentMethod.COD,
+                IsPaid = false,
+                ShippingAddress = address,
+            };
+
+            foreach (var item in cartItems)
+            {
+                var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
+                order.OrderTotal += product.FinalPrice * item.Quantity;
+            }
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            foreach (var item in cartItems)
+            {
+                var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
+                var orderItem = new Order_Item
+                {
+                    OrderId = order.Id,
+                    Product_SKUId = item.Product_SKUId,
+                    Quantity = item.Quantity,
+                    Price = product.FinalPrice
+                };
+
+                _context.Order_Items.Add(orderItem);
+                _context.Cart_Items.Remove(item);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

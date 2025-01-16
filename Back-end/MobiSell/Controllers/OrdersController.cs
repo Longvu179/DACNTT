@@ -41,6 +41,19 @@ namespace MobiSell.Controllers
 
             return order;
         }
+        
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUser(string userId)
+        {
+            var order = await _context.Orders.Where(o => o.UserId.Equals(userId)).ToListAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return order;
+        }
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

@@ -30,8 +30,7 @@ namespace MobiSell.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -76,16 +75,17 @@ namespace MobiSell.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DiscountPercentage = table.Column<double>(type: "float", nullable: false),
-                    DiscountAmount = table.Column<double>(type: "float", nullable: false),
-                    MinOrderAmount = table.Column<double>(type: "float", nullable: false),
-                    MaxDiscountAmount = table.Column<double>(type: "float", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    DiscountPercentage = table.Column<double>(type: "float", nullable: true),
+                    DiscountAmount = table.Column<double>(type: "float", nullable: true),
+                    MinOrderAmount = table.Column<double>(type: "float", nullable: true),
+                    MaxDiscountAmount = table.Column<double>(type: "float", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastUpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -226,10 +226,21 @@ namespace MobiSell.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    Chip = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LxWxHxW = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Display = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FrontCamera = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RearCamera = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Battery = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Charger = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Accessories = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Quality = table.Column<int>(type: "int", nullable: false),
                     Sold = table.Column<int>(type: "int", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     DayCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: false)
+                    DayUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,15 +260,17 @@ namespace MobiSell.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    VoucherId = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    ReceiverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReceiverNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderTotal = table.Column<int>(type: "int", nullable: false)
+                    VoucherId = table.Column<int>(type: "int", nullable: true),
+                    TotalQuantity = table.Column<int>(type: "int", nullable: false),
+                    DiscountPrice = table.Column<double>(type: "float", nullable: false),
+                    OrderTotal = table.Column<double>(type: "float", nullable: false),
+                    payment = table.Column<int>(type: "int", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CancelDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,64 +285,6 @@ namespace MobiSell.Migrations
                         column: x => x.VoucherId,
                         principalTable: "Vouchers",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Cart_Items",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CartId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cart_Items", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Cart_Items_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Cart_Items_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product_Details",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Specification = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Warranty = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Material = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Origin = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Manufacturer = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Manufacturers = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product_Details", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Product_Details_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -355,26 +310,30 @@ namespace MobiSell.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product_SKU",
+                name: "Product_SKUs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     SKU = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<double>(type: "float", nullable: false),
+                    RAM_ROM = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DefaultPrice = table.Column<double>(type: "float", nullable: false),
                     DiscountPercentage = table.Column<double>(type: "float", nullable: false),
                     FinalPrice = table.Column<double>(type: "float", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Sold = table.Column<int>(type: "int", nullable: false),
+                    Default = table.Column<bool>(type: "bit", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product_SKU", x => x.Id);
+                    table.PrimaryKey("PK_Product_SKUs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_SKU_Products_ProductId",
+                        name: "FK_Product_SKUs_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -389,7 +348,7 @@ namespace MobiSell.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -436,6 +395,35 @@ namespace MobiSell.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cart_Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CartId = table.Column<int>(type: "int", nullable: false),
+                    Product_SKUId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Cart_Items_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cart_Items_Product_SKUs_Product_SKUId",
+                        column: x => x.Product_SKUId,
+                        principalTable: "Product_SKUs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Order_Items",
                 columns: table => new
                 {
@@ -456,9 +444,9 @@ namespace MobiSell.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Order_Items_Product_SKU_Product_SKUId",
+                        name: "FK_Order_Items_Product_SKUs_Product_SKUId",
                         column: x => x.Product_SKUId,
-                        principalTable: "Product_SKU",
+                        principalTable: "Product_SKUs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -508,9 +496,9 @@ namespace MobiSell.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cart_Items_ProductId",
+                name: "IX_Cart_Items_Product_SKUId",
                 table: "Cart_Items",
-                column: "ProductId");
+                column: "Product_SKUId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",
@@ -538,18 +526,13 @@ namespace MobiSell.Migrations
                 column: "VoucherId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_Details_ProductId",
-                table: "Product_Details",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Product_Images_ProductId",
                 table: "Product_Images",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_SKU_ProductId",
-                table: "Product_SKU",
+                name: "IX_Product_SKUs_ProductId",
+                table: "Product_SKUs",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -603,9 +586,6 @@ namespace MobiSell.Migrations
                 name: "Order_Items");
 
             migrationBuilder.DropTable(
-                name: "Product_Details");
-
-            migrationBuilder.DropTable(
                 name: "Product_Images");
 
             migrationBuilder.DropTable(
@@ -624,7 +604,7 @@ namespace MobiSell.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Product_SKU");
+                name: "Product_SKUs");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

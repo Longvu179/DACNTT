@@ -12,8 +12,8 @@ using MobiSell.Data;
 namespace MobiSell.Migrations
 {
     [DbContext(typeof(MobiSellContext))]
-    [Migration("20250108105542_Init")]
-    partial class Init
+    [Migration("20250113063145_Init_img")]
+    partial class Init_img
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,7 +218,7 @@ namespace MobiSell.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Product_SKUId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -231,7 +231,7 @@ namespace MobiSell.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("Product_SKUId");
 
                     b.ToTable("Cart_Items");
                 });
@@ -244,8 +244,11 @@ namespace MobiSell.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("CancelDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("DiscountPrice")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
@@ -253,25 +256,28 @@ namespace MobiSell.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderNumber")
+                    b.Property<double>("OrderTotal")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ReceiverName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderTotal")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethod")
+                    b.Property<string>("ReceiverNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("payment")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -320,77 +326,65 @@ namespace MobiSell.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Accessories")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Battery")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Charger")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Chip")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DayCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DayUpdate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Display")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FrontCamera")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Images")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LxWxHxW")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quality")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RearCamera")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Size")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Sold")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("MobiSell.Models.Product_Detail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Manufacturer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Manufacturers")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Material")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Origin")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Size")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Specification")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Warranty")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Product_Details");
                 });
 
             modelBuilder.Entity("MobiSell.Models.Product_Image", b =>
@@ -428,8 +422,17 @@ namespace MobiSell.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Default")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("DefaultPrice")
+                        .HasColumnType("float");
 
                     b.Property<double>("DiscountPercentage")
                         .HasColumnType("float");
@@ -437,17 +440,20 @@ namespace MobiSell.Migrations
                     b.Property<double>("FinalPrice")
                         .HasColumnType("float");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("RAM_ROM")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SKU")
                         .HasColumnType("nvarchar(max)");
@@ -459,7 +465,7 @@ namespace MobiSell.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Product_SKU");
+                    b.ToTable("Product_SKUs");
                 });
 
             modelBuilder.Entity("MobiSell.Models.Review", b =>
@@ -470,7 +476,7 @@ namespace MobiSell.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
+                    b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -516,10 +522,7 @@ namespace MobiSell.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -585,32 +588,35 @@ namespace MobiSell.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("DiscountAmount")
+                    b.Property<double?>("DiscountAmount")
                         .HasColumnType("float");
 
-                    b.Property<double>("DiscountPercentage")
+                    b.Property<double?>("DiscountPercentage")
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("MaxDiscountAmount")
+                    b.Property<double?>("MaxDiscountAmount")
                         .HasColumnType("float");
 
-                    b.Property<double>("MinOrderAmount")
+                    b.Property<double?>("MinOrderAmount")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -711,15 +717,15 @@ namespace MobiSell.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobiSell.Models.Product", "Product")
+                    b.HasOne("MobiSell.Models.Product_SKU", "Product_SKU")
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("Product_SKUId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cart");
 
-                    b.Navigation("Product");
+                    b.Navigation("Product_SKU");
                 });
 
             modelBuilder.Entity("MobiSell.Models.Order", b =>
@@ -765,17 +771,6 @@ namespace MobiSell.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
-                });
-
-            modelBuilder.Entity("MobiSell.Models.Product_Detail", b =>
-                {
-                    b.HasOne("MobiSell.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MobiSell.Models.Product_Image", b =>

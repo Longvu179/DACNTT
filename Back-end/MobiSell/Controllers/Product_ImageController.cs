@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobiSell.Data;
 using MobiSell.Models;
+using MobiSell.Services;
 
 namespace MobiSell.Controllers
 {
@@ -15,10 +16,12 @@ namespace MobiSell.Controllers
     public class Product_ImageController : ControllerBase
     {
         private readonly MobiSellContext _context;
+        private readonly IFileService _fileService;
 
-        public Product_ImageController(MobiSellContext context)
+        public Product_ImageController(MobiSellContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         // GET: api/Product_Image
@@ -76,12 +79,58 @@ namespace MobiSell.Controllers
         // POST: api/Product_Image
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product_Image>> PostProduct_Image(Product_Image product_Image)
+        public async Task<ActionResult<Product_Image>> PostProduct_Image(IEnumerable<IFormFile> images, int productId)
         {
-            _context.Product_Images.Add(product_Image);
+            var imageNames = await _fileService.SaveFilesAsync(images);
+            foreach (var imageName in imageNames)
+            {
+                var product_Image = new Product_Image
+                {
+                    ProductId = productId,
+                    ImageName = imageName,
+                    IsMain = false,
+                    CreatedAt = DateTime.Now
+                };
+                _context.Product_Images.Add(product_Image);
+            }
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct_Image", new { id = product_Image.Id }, product_Image);
+            return Ok(imageNames);
+        }
+        [HttpPost("uploadImg")]
+        public async Task<IActionResult> SaveFilesAsync([FromForm] List<IFormFile> imgFiles)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var totalSize = imgFiles.Sum(imgFile => imgFile.Length);
+            var filePaths = new List<string>();
+
+            var folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            foreach (var imgFile in imgFiles)
+            {
+                var extension = Path.GetExtension(imgFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    return BadRequest("Invalid file type. Only JPG, PNG, JPEG and GIF are allowed.");
+                }
+
+                if (imgFile.Length > 0)
+                {
+                    var fileName = Path.GetRandomFileName() + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(imgFile.FileName);
+                    var fullPath = Path.Combine(folder, fileName);
+                    filePaths.Add(fullPath);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await imgFile.CopyToAsync(stream);
+                    }
+                }
+            }
+            return Ok(new {filePaths});
         }
 
         // DELETE: api/Product_Image/5
