@@ -531,3 +531,8 @@ D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\obj\Debug\net8.0\refint\MobiSell
 D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\obj\Debug\net8.0\MobiSell.pdb
 D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\obj\Debug\net8.0\MobiSell.genruntimeconfig.cache
 D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\obj\Debug\net8.0\ref\MobiSell.dll
+D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\bin\Debug\net8.0\MailKit.dll
+D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\bin\Debug\net8.0\MimeKit.dll
+D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\Thư mục mới\DuAnCNTT\Back-end\MobiSell\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

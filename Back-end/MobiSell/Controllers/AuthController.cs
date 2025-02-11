@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MobiSell.Data;
 using MobiSell.Models;
+using MobiSell.Services.EmailService;
+using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,13 +21,15 @@ namespace MobiSell.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
         private readonly MobiSellContext _context;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, MobiSellContext context)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IEmailService emailService, MobiSellContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _emailService = emailService;
             _context = context;
         }
 
@@ -43,13 +48,26 @@ namespace MobiSell.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                EmailConfirmed = false
             };
+
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });                
             }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"https://localhost:7011/api/Auth/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var emailDTO = new EmailDTO()
+            {
+                To = user.Email,
+                Subject = "Verify Your Email",
+                Body = "<p> Verify your email address to complete the signup and login into your account.</p> " +
+                        $"<a href='{confirmationLink}'>Click here to confirm your email</a>"
+            };
+            _emailService.SendEmail(emailDTO);
 
             var cart = new Cart()
             {
@@ -59,7 +77,7 @@ namespace MobiSell.Controllers
             };
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
-
+            
             return Ok();
         }
 
@@ -68,7 +86,18 @@ namespace MobiSell.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user == null)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+
+            // Kiểm tra xem email đã được xác nhận chưa
+            if (!user.EmailConfirmed)
+            {
+                return Unauthorized("Please confirm your email before logging in.");
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -96,6 +125,13 @@ namespace MobiSell.Controllers
 
                 var cart = await _context.Carts.FirstAsync(c => c.UserId == user.Id);
 
+                Response.Cookies.Append("token", new JwtSecurityTokenHandler().WriteToken(token), new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                    Expires = DateTime.Now.AddDays(3)
+                });
                 return Ok(new 
                 { 
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -107,5 +143,79 @@ namespace MobiSell.Controllers
             }
             return Unauthorized();
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("profile")]
+        public async Task<IActionResult> Profile(string userId)
+        {
+            //var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            //if (user != null)
+            //{
+            //    return Ok(new
+            //    {
+            //        user.Email,
+            //        user.UserName,
+            //        user.Id
+            //    });
+            //}
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return Unauthorized();
+        }
+
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateProfile(string userId, [FromBody] UserDTO user)
+        {
+            var currentUser = await _userManager.FindByIdAsync(userId);
+            if (currentUser == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            currentUser.PhoneNumber = user.PhoneNumber;
+            currentUser.FullName = user.FullName;
+            currentUser.Address = user.Address;
+
+            var result = await _userManager.UpdateAsync(currentUser);
+            if (result.Succeeded)
+            {
+                return Ok("Update profile success.");
+            }
+
+            return BadRequest("Update profile failed.");
+        }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return BadRequest("Thiếu thông tin xác thực.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Người dùng không tồn tại.");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return Ok("Email đã được xác thực thành công.");
+            }
+
+            return BadRequest("Xác thực email thất bại.");
+        }
+
     }
 }

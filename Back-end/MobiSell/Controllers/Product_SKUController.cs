@@ -41,6 +41,19 @@ namespace MobiSell.Controllers
 
             return product_SKU;
         }
+        
+        [HttpGet("getByProduct/{productId}")]
+        public async Task<ActionResult<IEnumerable<Product_SKU>>> GetByProductId(int productId)
+        {
+            var product_SKU = await _context.Product_SKUs.Where(p => p.ProductId.Equals(productId)).ToListAsync();
+
+            if (product_SKU == null)
+            {
+                return NotFound();
+            }
+
+            return product_SKU;
+        }
 
         // PUT: api/Product_SKU/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

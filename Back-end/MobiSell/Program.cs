@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using MobiSell.Data;
 using MobiSell.Models;
 using MobiSell.Services;
+using MobiSell.Services.EmailService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 6;
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedEmail = true;
 })
 .AddEntityFrameworkStores<MobiSellContext>()
 .AddDefaultTokenProviders();
@@ -59,6 +62,8 @@ builder.Services.AddCors(options =>
     });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<VNPayService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -71,6 +76,43 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new[] { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
+}
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+    string email = "admin@test.com";
+    string password = "Admin@123";
+    string name = "Admin";
+
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new User();
+        user.FullName = name;
+        user.UserName = email;
+        user.Email = email;
+        user.EmailConfirmed = true;
+        user.Address = "";
+
+        await userManager.CreateAsync(user, password);
+
+        await userManager.AddToRoleAsync(user, "Admin");
+    }
+}
+
+
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
@@ -80,5 +122,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors();
 
 app.Run();
