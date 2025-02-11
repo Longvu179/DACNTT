@@ -123,7 +123,19 @@ namespace MobiSell.Controllers
                     signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
                 );
 
-                var cart = await _context.Carts.FirstAsync(c => c.UserId == user.Id);
+                var cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == user.Id);
+                if (cart == null)
+                {
+                    var newCart = new Cart()
+                    {
+                        UserId = user.Id,
+                        Total = 0,
+                        UpdateAt = DateTime.UtcNow,
+                    };
+                    _context.Carts.Add(newCart);
+                    await _context.SaveChangesAsync();
+                    cart = newCart;
+                }
 
                 Response.Cookies.Append("token", new JwtSecurityTokenHandler().WriteToken(token), new CookieOptions
                 {
