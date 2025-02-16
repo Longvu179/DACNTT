@@ -44,6 +44,19 @@ namespace MobiSell.Controllers
 
             return product_Image;
         }
+        
+        [HttpGet("getByProduct/{productId}")]
+        public async Task<ActionResult<IEnumerable<Product_Image>>> GetByProductId(int productId)
+        {
+            var product_Image = await _context.Product_Images.Where(p => p.ProductId.Equals(productId)).ToListAsync();
+
+            if (product_Image == null)
+            {
+                return NotFound();
+            }
+
+            return product_Image;
+        }
 
         // PUT: api/Product_Image/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

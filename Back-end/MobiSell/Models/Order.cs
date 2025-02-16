@@ -22,8 +22,6 @@
     public enum PaymentMethod
     {
         COD,
-        Card,
-        BankTransfer,
         VNpay
     }
 }

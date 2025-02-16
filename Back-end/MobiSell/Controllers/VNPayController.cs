@@ -8,34 +8,27 @@ namespace MobiSell.Controllers
     [Route("api/[controller]")]
     public class PaymentController : ControllerBase
     {
-        private readonly VNPayService _vnPayService;
-
-        public PaymentController(VNPayService vnPayService)
+        private readonly IVNPayService _vnPayService;
+        public PaymentController(IVNPayService vnPayService)
         {
+
             _vnPayService = vnPayService;
         }
-
         [HttpPost("create-payment")]
-        public IActionResult CreatePayment([FromBody] VNPayRequestDto request)
+        public IActionResult CreatePaymentUrlVnpay(VNPayRequestDTO model)
         {
-            var returnUrl = Url.Action("PaymentCallback", "Payment", null, Request.Scheme);
-            var paymentUrl = _vnPayService.CreatePaymentUrl(request, returnUrl);
-            return Ok(new { PaymentUrl = paymentUrl });
-        }
+            var url = _vnPayService.CreatePaymentUrl(model, HttpContext);
 
+            return Ok(url);
+        }
         [HttpGet("payment-callback")]
-        public IActionResult PaymentCallback()
+        public IActionResult PaymentCallbackVnpay()
         {
-            var queryCollection = HttpContext.Request.Query;
-            if (_vnPayService.ValidatePayment(queryCollection, out var orderId))
-            {
-                // Xử lý thanh toán thành công
-                return Ok(new { Message = "Payment successful", OrderId = orderId });
-            }
+            var response = _vnPayService.PaymentExecute(Request.Query);
 
-            // Xử lý thanh toán thất bại
-            return BadRequest(new { Message = "Payment failed" });
+            return Ok(response);
         }
+
     }
 
 }

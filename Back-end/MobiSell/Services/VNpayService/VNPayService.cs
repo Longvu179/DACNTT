@@ -7,48 +7,50 @@ using Microsoft.Extensions.Configuration;
 using MobiSell.Services.VNpayService;
 namespace MobiSell.Services
 {
-    public class VNPayService
+    public class VNPayService : IVNPayService
     {
-        private readonly string _vnp_TmnCode = "U41VENDN";
-        private readonly string _vnp_HashSecret = "3UC6UQ5KP174YE1J3XP9MLD0KLH0X6GP";
-        private readonly string _vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        private readonly IConfiguration _config;
 
-        public string CreatePaymentUrl(VNPayRequestDto request, string returnUrl)
+        public VNPayService(IConfiguration config)
         {
-            var vnpay = new VNPayLibrary();
-            vnpay.AddRequestData("vnp_Version", "2.1.0");
-            vnpay.AddRequestData("vnp_Command", "pay");
-            vnpay.AddRequestData("vnp_TmnCode", _vnp_TmnCode);
-            vnpay.AddRequestData("vnp_Amount", (request.Amount * 100).ToString()); // Amount in VND
-            vnpay.AddRequestData("vnp_CreateDate", request.CreateDate.ToString("yyyyMMddHHmmss"));
-            vnpay.AddRequestData("vnp_CurrCode", "VND");
-            vnpay.AddRequestData("vnp_IpAddr", request.IpAddress);
-            vnpay.AddRequestData("vnp_Locale", "vn");
-            vnpay.AddRequestData("vnp_OrderInfo", request.OrderInfo);
-            vnpay.AddRequestData("vnp_OrderType", "other");
-            vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
-            vnpay.AddRequestData("vnp_TxnRef", request.OrderId);
+            _config = config;
+        }
 
-            string paymentUrl = vnpay.CreateRequestUrl(_vnp_Url, _vnp_HashSecret);
+        public string CreatePaymentUrl(VNPayRequestDTO model, HttpContext context)
+        {
+            var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
+            var tick = DateTime.Now.Ticks.ToString();
+            var pay = new VNPayLibrary();
+            var urlCallBack = _config["VnPay:ReturnUrl"];
+
+            pay.AddRequestData("vnp_Version", "2.1.0");
+            pay.AddRequestData("vnp_Command", "pay");
+            pay.AddRequestData("vnp_TmnCode", _config["VnPay:TmnCode"]);
+            pay.AddRequestData("vnp_Amount", ((int)model.Amount * 100).ToString());
+            pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
+            pay.AddRequestData("vnp_CurrCode", "VND");
+            pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
+            pay.AddRequestData("vnp_Locale", "vn");
+            pay.AddRequestData("vnp_OrderInfo", $"{model.Name} {model.OrderDescription} {model.Amount}");
+            pay.AddRequestData("vnp_OrderType", model.OrderType);
+            pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
+            pay.AddRequestData("vnp_TxnRef", tick);
+
+            var paymentUrl =
+                pay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
+
             return paymentUrl;
         }
 
-        public bool ValidatePayment(IQueryCollection collections, out string orderId)
+
+        public VNPayResponeDTO PaymentExecute(IQueryCollection collections)
         {
-            var vnpay = new VNPayLibrary();
-            foreach (var (key, value) in collections)
-            {
-                if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
-                {
-                    vnpay.AddResponseData(key, value);
-                }
-            }
+            var pay = new VNPayLibrary();
+            var response = pay.GetFullResponseData(collections, _config["VnPay:HashSecret"]);
 
-            orderId = vnpay.GetResponseData("vnp_TxnRef");
-            var vnp_SecureHash = collections["vnp_SecureHash"];
-            var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
-
-            return vnpay.ValidateSignature(vnp_SecureHash, _vnp_HashSecret) && vnp_ResponseCode == "00";
+            return response;
         }
+
     }
 }

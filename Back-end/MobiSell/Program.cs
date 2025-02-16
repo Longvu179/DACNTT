@@ -9,6 +9,7 @@ using MobiSell.Data;
 using MobiSell.Models;
 using MobiSell.Services;
 using MobiSell.Services.EmailService;
+using MobiSell.Services.VNpayService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +64,7 @@ builder.Services.AddCors(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddSingleton<VNPayService>();
+builder.Services.AddScoped<IVNPayService, VNPayService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -113,7 +114,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Uploads"
+});
 
 app.UseHttpsRedirection();
 

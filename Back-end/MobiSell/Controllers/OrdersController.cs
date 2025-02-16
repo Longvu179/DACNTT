@@ -42,7 +42,7 @@ namespace MobiSell.Controllers
             return order;
         }
         
-        [HttpGet("{userId}")]
+        [HttpGet("getByUser/{userId}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUser(string userId)
         {
             var order = await _context.Orders.Where(o => o.UserId.Equals(userId)).ToListAsync();

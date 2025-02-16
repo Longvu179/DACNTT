@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobiSell.Data;
 using MobiSell.Models;
+using MobiSell.Services;
+using MobiSell.Services.VNpayService;
 
 namespace MobiSell.Controllers
 {
@@ -15,10 +17,12 @@ namespace MobiSell.Controllers
     public class Cart_ItemController : ControllerBase
     {
         private readonly MobiSellContext _context;
+        private readonly IVNPayService _vnPayService;
 
-        public Cart_ItemController(MobiSellContext context)
+        public Cart_ItemController(MobiSellContext context, IVNPayService vnPayService)
         {
             _context = context;
+            _vnPayService = vnPayService;
         }
 
         // GET: api/Cart_Item
@@ -100,7 +104,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost("Purchase")]
-        public async Task<ActionResult<Cart_Item>> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address)
+        public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm)
         {
             var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
             var order = new Order
@@ -109,7 +113,7 @@ namespace MobiSell.Controllers
                 ReceiverName = name,
                 ReceiverNumber = phoneNumber,
                 OrderDate = DateTime.Now,
-                payment = PaymentMethod.COD,
+                payment = pm,
                 IsPaid = false,
                 ShippingAddress = address,
             };
@@ -140,6 +144,19 @@ namespace MobiSell.Controllers
 
             await _context.SaveChangesAsync();
 
+            if (pm == PaymentMethod.VNpay)
+            {
+                var request = new VNPayRequestDTO
+                {
+                    OrderType = "billpayment",
+                    OrderDescription = "Thanh toán đơn hàng",
+                    Amount = order.OrderTotal,
+                    Name = name
+                };
+
+                var url = _vnPayService.CreatePaymentUrl(request, HttpContext);
+                return Ok(url);
+            }
             return Ok();
         }
     }

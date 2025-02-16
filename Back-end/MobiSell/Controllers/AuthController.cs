@@ -144,6 +144,8 @@ namespace MobiSell.Controllers
                     Secure = true,
                     Expires = DateTime.Now.AddDays(3)
                 });
+                await _userManager.AddToRoleAsync(user, "User");
+
                 return Ok(new 
                 { 
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -167,16 +169,7 @@ namespace MobiSell.Controllers
         public async Task<IActionResult> Profile(string userId)
         {
             //var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            //if (user != null)
-            //{
-            //    return Ok(new
-            //    {
-            //        user.Email,
-            //        user.UserName,
-            //        user.Id
-            //    });
-            //}
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 return Ok(user);
