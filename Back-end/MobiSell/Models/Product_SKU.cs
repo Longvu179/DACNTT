@@ -1,4 +1,6 @@
-﻿namespace MobiSell.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MobiSell.Models
 {
     public class Product_SKU
     {
@@ -11,6 +13,7 @@
         public double DefaultPrice { get; set; }
         public double DiscountPercentage { get; set; }
         public double FinalPrice { get; set; }
+        public string ImageName { get; set; }
         public int Quantity { get; set; }
         public int Sold { get; set; }
         public bool Default { get; set; }

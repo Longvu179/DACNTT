@@ -2,17 +2,17 @@
 {
     public interface IFileService
     {
-        Task<List<string>> SaveFilesAsync(IEnumerable<IFormFile> imgFile);
+        Task<List<string>> SaveFilesAsync(IEnumerable<IFormFile> imgFile, int productId);
         Task DeleteFileAsync(string fileName);
     }
     public class FileService : IFileService
     {
-        public async Task<List<string>> SaveFilesAsync(IEnumerable<IFormFile> imgFiles)
+        public async Task<List<string>> SaveFilesAsync(IEnumerable<IFormFile> imgFiles, int productId)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
             var savedFileNames = new List<string>();
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads/" + productId);
             if (!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);

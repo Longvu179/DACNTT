@@ -168,8 +168,8 @@ namespace MobiSell.Controllers
         [Route("profile")]
         public async Task<IActionResult> Profile(string userId)
         {
-            //var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            //var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 return Ok(user);

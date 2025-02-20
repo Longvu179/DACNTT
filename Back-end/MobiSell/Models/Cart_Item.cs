@@ -8,6 +8,7 @@
         public int Product_SKUId { get; set; }
         public Product_SKU Product_SKU { get; set; }
         public int Quantity { get; set; }
+        public bool IsSelected { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
     }

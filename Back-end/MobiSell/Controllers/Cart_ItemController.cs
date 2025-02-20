@@ -31,6 +31,11 @@ namespace MobiSell.Controllers
         {
             return await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
         }
+        [HttpGet("getSelected")]
+        public async Task<ActionResult<IEnumerable<Cart_Item>>> GetCart_Item_Selected(int cartId)
+        {
+            return await _context.Cart_Items.Where(i => i.CartId == cartId & i.IsSelected == true).ToListAsync();
+        }
 
         // GET: api/Cart_Item/5
         [HttpGet("{id}")]
@@ -83,6 +88,21 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
+        [HttpPut("select/{id}")]
+        public async Task<IActionResult> UpdateSelect(int id, bool select)
+        {
+            var cart_Item = await _context.Cart_Items.FindAsync(id);
+            if (cart_Item == null)
+            {
+                return NotFound();
+            }
+
+            cart_Item.IsSelected = select;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCart_Item(int id)
         {
@@ -106,7 +126,7 @@ namespace MobiSell.Controllers
         [HttpPost("Purchase")]
         public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm)
         {
-            var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
+            var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId & i.IsSelected == true).ToListAsync();
             var order = new Order
             {
                 UserId = userId,

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using MobiSell.Data;
 using MobiSell.Models;
+using MobiSell.Services;
 
 namespace MobiSell.Controllers
 {
@@ -15,10 +17,12 @@ namespace MobiSell.Controllers
     public class Product_SKUController : ControllerBase
     {
         private readonly MobiSellContext _context;
+        private readonly IFileService _fileService;
 
-        public Product_SKUController(MobiSellContext context)
+        public Product_SKUController(MobiSellContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         // GET: api/Product_SKU
@@ -89,8 +93,13 @@ namespace MobiSell.Controllers
         // POST: api/Product_SKU
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product_SKU>> PostProduct_SKU(Product_SKU product_SKU)
+        public async Task<ActionResult<Product_SKU>> PostProduct_SKU(
+            [FromForm] Product_SKU product_SKU,
+            [FromForm] IEnumerable<IFormFile> images)
         {
+            var imageNames = await _fileService.SaveFilesAsync(images, product_SKU.ProductId);
+
+            product_SKU.ImageName = imageNames[0];
             _context.Product_SKUs.Add(product_SKU);
             await _context.SaveChangesAsync();
 

@@ -92,9 +92,9 @@ namespace MobiSell.Controllers
         // POST: api/Product_Image
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product_Image>> PostProduct_Image(IEnumerable<IFormFile> images, int productId)
+        public async Task<ActionResult<Product_Image>> PostProduct_Image(List<IFormFile> images, int productId)
         {
-            var imageNames = await _fileService.SaveFilesAsync(images);
+            var imageNames = await _fileService.SaveFilesAsync(images, productId);
             foreach (var imageName in imageNames)
             {
                 var product_Image = new Product_Image
@@ -110,41 +110,41 @@ namespace MobiSell.Controllers
 
             return Ok(imageNames);
         }
-        [HttpPost("uploadImg")]
-        public async Task<IActionResult> SaveFilesAsync([FromForm] List<IFormFile> imgFiles)
-        {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-            var totalSize = imgFiles.Sum(imgFile => imgFile.Length);
-            var filePaths = new List<string>();
+        //[HttpPost("uploadImg")]
+        //public async Task<IActionResult> SaveFilesAsync([FromForm] List<IFormFile> imgFiles, int productId)
+        //{
+        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+        //    var totalSize = imgFiles.Sum(imgFile => imgFile.Length);
+        //    var filePaths = new List<string>();
 
-            var folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            if (!Directory.Exists(folder))
-            {
-                Directory.CreateDirectory(folder);
-            }
+        //    var folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads/" + productId);
+        //    if (!Directory.Exists(folder))
+        //    {
+        //        Directory.CreateDirectory(folder);
+        //    }
 
-            foreach (var imgFile in imgFiles)
-            {
-                var extension = Path.GetExtension(imgFile.FileName).ToLower();
-                if (!allowedExtensions.Contains(extension))
-                {
-                    return BadRequest("Invalid file type. Only JPG, PNG, JPEG and GIF are allowed.");
-                }
+        //    foreach (var imgFile in imgFiles)
+        //    {
+        //        var extension = Path.GetExtension(imgFile.FileName).ToLower();
+        //        if (!allowedExtensions.Contains(extension))
+        //        {
+        //            return BadRequest("Invalid file type. Only JPG, PNG, JPEG and GIF are allowed.");
+        //        }
 
-                if (imgFile.Length > 0)
-                {
-                    var fileName = Path.GetRandomFileName() + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(imgFile.FileName);
-                    var fullPath = Path.Combine(folder, fileName);
-                    filePaths.Add(fullPath);
+        //        if (imgFile.Length > 0)
+        //        {
+        //            var fileName = Path.GetRandomFileName() + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(imgFile.FileName);
+        //            var fullPath = Path.Combine(folder, fileName);
+        //            filePaths.Add(fullPath);
 
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        await imgFile.CopyToAsync(stream);
-                    }
-                }
-            }
-            return Ok(new {filePaths});
-        }
+        //            using (var stream = new FileStream(fullPath, FileMode.Create))
+        //            {
+        //                await imgFile.CopyToAsync(stream);
+        //            }
+        //        }
+        //    }
+        //    return Ok(new {filePaths});
+        //}
 
         // DELETE: api/Product_Image/5
         [HttpDelete("{id}")]

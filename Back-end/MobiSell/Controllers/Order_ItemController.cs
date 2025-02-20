@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using MobiSell.Data;
 using MobiSell.Models;
@@ -33,6 +34,18 @@ namespace MobiSell.Controllers
         public async Task<ActionResult<Order_Item>> GetOrder_Item(int id)
         {
             var order_Item = await _context.Order_Items.FindAsync(id);
+
+            if (order_Item == null)
+            {
+                return NotFound();
+            }
+
+            return order_Item;
+        }
+        [HttpGet("getByOrder/{orderId}")]
+        public async Task<ActionResult<IEnumerable<Order_Item>>> GetByOrderId(int orderId)
+        {
+            var order_Item = await _context.Order_Items.Where(o => o.OrderId.Equals(orderId)).ToListAsync();
 
             if (order_Item == null)
             {
