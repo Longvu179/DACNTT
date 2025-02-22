@@ -55,16 +55,18 @@ namespace MobiSell.Controllers
         public async Task<IActionResult> PutCart_Item(int id, int amount)
         {
             var cart_Item = await _context.Cart_Items.FindAsync(id);
+            var product = await _context.Product_SKUs.FindAsync(cart_Item.Product_SKUId);
+
             if (cart_Item == null)
             {
                 return BadRequest();
             }
 
-            if (amount < 1 && cart_Item.Quantity > 1)
+            if (amount < 1 && cart_Item.Quantity > 1 )
             {
                 cart_Item.Quantity -= 1;
             }
-            else
+            else if (amount > 0 && cart_Item.Quantity < product.Quantity)
             {
                 cart_Item.Quantity += 1;
             }
@@ -124,9 +126,8 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost("Purchase")]
-        public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm)
-        {
-            var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId & i.IsSelected == true).ToListAsync();
+        public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm, int product_SKUId, int quantity)
+        {   
             var order = new Order
             {
                 UserId = userId,
@@ -136,38 +137,57 @@ namespace MobiSell.Controllers
                 payment = pm,
                 IsPaid = false,
                 ShippingAddress = address,
+                OrderTotal = 0,
             };
-
-            foreach (var item in cartItems)
-            {
-                var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
-                order.OrderTotal += product.FinalPrice * item.Quantity;
-            }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            foreach (var item in cartItems)
+            if (await _context.Product_SKUs.FindAsync(product_SKUId) != null)
             {
-                var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
+                var product = await _context.Product_SKUs.FindAsync(product_SKUId);
+                order.OrderTotal = product.FinalPrice * quantity;
+
                 var orderItem = new Order_Item
                 {
                     OrderId = order.Id,
-                    Product_SKUId = item.Product_SKUId,
-                    Quantity = item.Quantity,
-                    Price = product.FinalPrice
+                    Product_SKUId = product_SKUId,
+                    Quantity = quantity,
+                    Price = product.FinalPrice,
                 };
-
                 _context.Order_Items.Add(orderItem);
-                _context.Cart_Items.Remove(item);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId & i.IsSelected == true).ToListAsync();
+
+                foreach (var item in cartItems)
+                {
+                    var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
+                    order.OrderTotal += product.FinalPrice * item.Quantity;
+
+                    var orderItem = new Order_Item
+                    {
+                        OrderId = order.Id,
+                        Product_SKUId = item.Product_SKUId,
+                        Quantity = item.Quantity,
+                        Price = product.FinalPrice,
+                    };
+
+                    _context.Order_Items.Add(orderItem);
+                    _context.Cart_Items.Remove(item);
+                }
+
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
 
             if (pm == PaymentMethod.VNpay)
             {
                 var request = new VNPayRequestDTO
                 {
+                    OrderId = order.Id.ToString(),
                     OrderType = "billpayment",
                     OrderDescription = "Thanh toán đơn hàng",
                     Amount = order.OrderTotal,

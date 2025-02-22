@@ -90,8 +90,6 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
-        // POST: api/Product_SKU
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Product_SKU>> PostProduct_SKU(
             [FromForm] Product_SKU product_SKU,
@@ -106,7 +104,6 @@ namespace MobiSell.Controllers
             return CreatedAtAction("GetProduct_SKU", new { id = product_SKU.Id }, product_SKU);
         }
 
-        // DELETE: api/Product_SKU/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct_SKU(int id)
         {
@@ -126,5 +123,67 @@ namespace MobiSell.Controllers
         {
             return _context.Product_SKUs.Any(e => e.Id == id);
         }
+
+        [HttpPost("addToCart")]
+        public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int product_SKUId)
+        {
+            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
+            var product = await _context.Product_SKUs.FindAsync(product_SKUId);
+            if (item == null)
+            {
+                var cartItem = new Cart_Item()
+                {
+                    CartId = cartId,
+                    Product_SKUId = product_SKUId,
+                    Quantity = 1,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdateAt = DateTime.UtcNow
+                };
+
+                _context.Cart_Items.Add(cartItem);
+                await _context.SaveChangesAsync();
+                return Ok("Add to cart success!");
+            }
+            else if (item.Quantity < product.Quantity)
+            {
+                item.Quantity++;
+                item.UpdateAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("removeFromCart")]
+        public async Task<IActionResult> RemoveFromCart(int cartId, int product_SKUId)
+        {
+            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            _context.Cart_Items.Remove(item);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        //[HttpPost("purchase")]
+        //public async Task<IActionResult> Purchase(int product_SKUId)
+        //{
+        //    //var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
+        //    foreach (var item in cartItems)
+        //    {
+        //        var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
+        //        if (item.Quantity > product.Quantity)
+        //        {
+        //            return BadRequest("Product out of stock!");
+        //        }
+        //        product.Quantity -= item.Quantity;
+        //        _context.Cart_Items.Remove(item);
+        //    }
+        //    await _context.SaveChangesAsync();
+        //    return Ok("Purchase success!");
+        //}
     }
 }

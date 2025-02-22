@@ -116,50 +116,7 @@ namespace MobiSell.Controllers
         {
             return await _context.Products.Where(p => p.Name.Contains(keyword)).ToListAsync();
         }
-
-        [HttpPost("addToCart")]
-        public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int product_SKUId)
-        {
-            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
-            var product = await _context.Product_SKUs.FindAsync(product_SKUId); 
-            if (item == null)
-            {
-                var cartItem = new Cart_Item()
-                {
-                    CartId = cartId,
-                    Product_SKUId = product_SKUId,
-                    Quantity = 1,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdateAt = DateTime.UtcNow
-                };
-
-                _context.Cart_Items.Add(cartItem);
-                await _context.SaveChangesAsync();
-                return Ok("Add to cart success!");
-            }
-            else if(item.Quantity < product.Quantity)
-            {
-                item.Quantity++;
-                item.UpdateAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
-            return NoContent();
-        }
-
-        [HttpDelete("removeFromCart")]
-        public async Task<IActionResult> RemoveFromCart(int cartId, int product_SKUId)
-        {
-            var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            
-            _context.Cart_Items.Remove(item);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+        
 
         [HttpPost("wishlist")]
         public async Task<ActionResult<WishList>> WishList(string userId, int productId)
