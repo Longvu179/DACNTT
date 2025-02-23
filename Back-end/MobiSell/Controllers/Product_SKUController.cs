@@ -62,14 +62,37 @@ namespace MobiSell.Controllers
         // PUT: api/Product_SKU/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct_SKU(int id, Product_SKU product_SKU)
+        public async Task<IActionResult> PutProduct_SKU(int id,
+            [FromForm] Product_SKU product_SKU,
+            [FromForm] IEnumerable<IFormFile> images)
         {
-            if (id != product_SKU.Id)
+            if (!Product_SKUExists(id))
             {
-                return BadRequest();
+                return NotFound();
             }
+            var default_product_SKU = await _context.Product_SKUs.FindAsync(id);
 
-            _context.Entry(product_SKU).State = EntityState.Modified;
+            default_product_SKU.SKU = product_SKU.SKU;
+            default_product_SKU.RAM_ROM = product_SKU.RAM_ROM;
+            default_product_SKU.Color = product_SKU.Color;
+            default_product_SKU.DefaultPrice = product_SKU.DefaultPrice;
+            default_product_SKU.DiscountPercentage = product_SKU.DiscountPercentage;
+            default_product_SKU.FinalPrice = product_SKU.FinalPrice;
+            default_product_SKU.Quantity = product_SKU.Quantity;
+            default_product_SKU.Sold = product_SKU.Sold;
+            default_product_SKU.Default = product_SKU.Default;
+            default_product_SKU.IsAvailable = product_SKU.IsAvailable;
+            default_product_SKU.LastUpdatedAt = DateTime.UtcNow;
+
+
+            if(default_product_SKU.ImageName != images.FirstOrDefault().FileName) 
+            {
+                var imageNames = await _fileService.SaveFilesAsync(images, default_product_SKU.ProductId);
+                await _fileService.DeleteFileAsync(default_product_SKU.ProductId + "/" + default_product_SKU.ImageName);
+                default_product_SKU.ImageName = imageNames[0];
+            }
+            
+            _context.Entry(default_product_SKU).State = EntityState.Modified;
 
             try
             {
@@ -77,14 +100,7 @@ namespace MobiSell.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Product_SKUExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -167,23 +183,5 @@ namespace MobiSell.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
-        //[HttpPost("purchase")]
-        //public async Task<IActionResult> Purchase(int product_SKUId)
-        //{
-        //    //var cartItems = await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
-        //    foreach (var item in cartItems)
-        //    {
-        //        var product = await _context.Product_SKUs.FindAsync(item.Product_SKUId);
-        //        if (item.Quantity > product.Quantity)
-        //        {
-        //            return BadRequest("Product out of stock!");
-        //        }
-        //        product.Quantity -= item.Quantity;
-        //        _context.Cart_Items.Remove(item);
-        //    }
-        //    await _context.SaveChangesAsync();
-        //    return Ok("Purchase success!");
-        //}
     }
 }

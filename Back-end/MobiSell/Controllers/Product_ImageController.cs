@@ -61,14 +61,27 @@ namespace MobiSell.Controllers
         // PUT: api/Product_Image/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct_Image(int id, Product_Image product_Image)
+        public async Task<IActionResult> PutProduct_Image(int id, 
+            [FromForm] Product_Image product_Image,
+            [FromForm] IEnumerable<IFormFile> images)
         {
-            if (id != product_Image.Id)
+            if (!Product_ImageExists(id))
             {
-                return BadRequest();
+                return NotFound();
+            }
+            var default_product_Image = await _context.Product_Images.FindAsync(id);
+
+            if(images != null)
+            {
+                if(default_product_Image.ImageName != images.FirstOrDefault().FileName)
+                {
+                    var imageNames = await _fileService.SaveFilesAsync(images, default_product_Image.ProductId);
+                    await _fileService.DeleteFileAsync(default_product_Image.ProductId + "/" + default_product_Image.ImageName);
+                    default_product_Image.ImageName = imageNames[0];
+                }                
             }
 
-            _context.Entry(product_Image).State = EntityState.Modified;
+            _context.Entry(default_product_Image).State = EntityState.Modified;
 
             try
             {
@@ -76,14 +89,7 @@ namespace MobiSell.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Product_ImageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -110,41 +116,6 @@ namespace MobiSell.Controllers
 
             return Ok(imageNames);
         }
-        //[HttpPost("uploadImg")]
-        //public async Task<IActionResult> SaveFilesAsync([FromForm] List<IFormFile> imgFiles, int productId)
-        //{
-        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        //    var totalSize = imgFiles.Sum(imgFile => imgFile.Length);
-        //    var filePaths = new List<string>();
-
-        //    var folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads/" + productId);
-        //    if (!Directory.Exists(folder))
-        //    {
-        //        Directory.CreateDirectory(folder);
-        //    }
-
-        //    foreach (var imgFile in imgFiles)
-        //    {
-        //        var extension = Path.GetExtension(imgFile.FileName).ToLower();
-        //        if (!allowedExtensions.Contains(extension))
-        //        {
-        //            return BadRequest("Invalid file type. Only JPG, PNG, JPEG and GIF are allowed.");
-        //        }
-
-        //        if (imgFile.Length > 0)
-        //        {
-        //            var fileName = Path.GetRandomFileName() + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(imgFile.FileName);
-        //            var fullPath = Path.Combine(folder, fileName);
-        //            filePaths.Add(fullPath);
-
-        //            using (var stream = new FileStream(fullPath, FileMode.Create))
-        //            {
-        //                await imgFile.CopyToAsync(stream);
-        //            }
-        //        }
-        //    }
-        //    return Ok(new {filePaths});
-        //}
 
         // DELETE: api/Product_Image/5
         [HttpDelete("{id}")]
@@ -155,6 +126,7 @@ namespace MobiSell.Controllers
             {
                 return NotFound();
             }
+            await _fileService.DeleteFileAsync(product_Image.ProductId + "/" + product_Image.ImageName);
 
             _context.Product_Images.Remove(product_Image);
             await _context.SaveChangesAsync();

@@ -116,7 +116,19 @@ namespace MobiSell.Controllers
         {
             return await _context.Products.Where(p => p.Name.Contains(keyword)).ToListAsync();
         }
-        
+
+        [HttpGet("wishlist/{userId}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetWishList(string userId)
+        {
+            var wishList = await _context.WishLists.Where(w => w.UserId == userId).ToListAsync();
+            var products = new List<Product>();
+            foreach (var item in wishList)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                products.Add(product);
+            }
+            return products;
+        }
 
         [HttpPost("wishlist")]
         public async Task<ActionResult<WishList>> WishList(string userId, int productId)
