@@ -13,15 +13,24 @@
         public int TotalQuantity { get; set; }
         public double DiscountPrice { get; set; }
         public double OrderTotal { get; set; }
-        public PaymentMethod payment { get; set; }
+        public OrderStatus Status { get; set; }
+        public PaymentMethod Payment { get; set; }
         public bool IsPaid { get; set; }
         public DateTime OrderDate { get; set; }
-        public DateTime CancelDate { get; set; }
+        public DateTime? CancelDate { get; set; }
     }
 
     public enum PaymentMethod
     {
         COD,
         VNpay
+    }
+
+    public enum OrderStatus
+    {
+        Processing,    // Đang xử lý
+        Shipped,       // Đã giao cho đơn vị vận chuyển
+        Delivered,     // Đã giao hàng
+        Cancelled      // Đã hủy
     }
 }

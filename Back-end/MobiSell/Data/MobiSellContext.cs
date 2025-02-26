@@ -54,6 +54,14 @@ namespace MobiSell.Data
                 new Product { Id = 3, Name = "Iphone 16 Pro", Description = "", BrandId = 1, Chip = "Apple A18 Pro 6 nhân", Size = "6.3\"", 
                     LxWxHxW = "Dài 149.6 mm - Ngang 71.5 mm - Dày 8.25 mm - Nặng 199 g", Display = "OLED", FrontCamera = "12 MP", RearCamera = "Chính 48 MP & Phụ 48 MP, 12 MP", 
                     Battery = "27 giờ", Charger = "20W", Accessories = "", Quality = 10, Sold = 0, IsAvailable = true, DayCreate = DateTime.Now, DayUpdate = DateTime.Now },
+                
+                new Product { Id = 3, Name = "Iphone 16 Plus", Description = "", BrandId = 1, Chip = "Apple A18 6 nhân", Size = "6.7\"", 
+                    LxWxHxW = "Dài 160.9 mm - Ngang 77.8 mm - Dày 7.8 mm - Nặng 199 g", Display = "OLED", FrontCamera = "12 MP", RearCamera = "Chính 48 MP & Phụ 48 MP, 12 MP", 
+                    Battery = "27 giờ", Charger = "20W", Accessories = "", Quality = 10, Sold = 0, IsAvailable = true, DayCreate = DateTime.Now, DayUpdate = DateTime.Now },
+
+                new Product { Id = 1, Name = "Iphone 15 Pro max", Description = "", BrandId = 1, Chip = "Apple A18 Pro 6 nhân", Size = "6.9\"", 
+                    LxWxHxW = "Dài 163 mm - Ngang 77.6 mm - Dày 8.25 mm - Nặng 227 g", Display = "OLED", FrontCamera = "12 MP", RearCamera = "Chính 48 MP & Phụ 48 MP, 12 MP", 
+                    Battery = "33 giờ", Charger = "20W", Accessories = "", Quality = 10, Sold = 0, IsAvailable = true, DayCreate = DateTime.Now, DayUpdate = DateTime.Now },
 
                 new Product { Id = 4, Name = "OPPO Reno13 F 5G", Description = "", BrandId = 4, Chip = "Snapdragon 6 Gen 1 5G 8 nhân", Size = "6.67\"", 
                     LxWxHxW = "Dài 162.2 mm - Ngang 75.05 mm - Dày 7.76 mm - Nặng 192 g", Display = "AMOLED", FrontCamera = "32 MP", RearCamera = "Chính 50 MP & Phụ 8 MP, 2 MP", 

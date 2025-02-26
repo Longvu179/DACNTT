@@ -113,6 +113,56 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
+        private async Task<IActionResult> UpdateOrderStatusAsync(int id, OrderStatus newStatus)
+        {
+            var order = await _context.Orders.FindAsync(id);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng." });
+
+            if (order.Status == OrderStatus.Delivered)
+                return BadRequest(new { message = "Đơn hàng đã giao không thể thay đổi trạng thái." });
+
+            if (order.Status == OrderStatus.Cancelled)
+                return BadRequest(new { message = "Đơn hàng đã bị hủy không thể thay đổi trạng thái." });
+
+            if (newStatus == OrderStatus.Cancelled && order.Status == OrderStatus.Delivered)
+                return BadRequest(new { message = "Không thể hủy đơn hàng đã giao." });
+            
+            if (newStatus == OrderStatus.Cancelled && order.Status == OrderStatus.Shipped)
+                return BadRequest(new { message = "Không thể hủy đơn hàng đã giao cho đơn vị vận chuyển." });
+
+            if (order.Status == newStatus)
+                return BadRequest(new { message = $"Đơn hàng đã ở trạng thái {newStatus}." });
+
+            order.Status = newStatus;
+
+            if (newStatus == OrderStatus.Cancelled)
+                order.CancelDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"Cập nhật trạng thái đơn hàng thành {newStatus} thành công." });
+        }
+
+        [HttpPut("cancel/{id}")]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            return await UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
+        }
+
+        [HttpPut("ship/{id}")]
+        public async Task<IActionResult> ShipOrder(int id)
+        {
+            return await UpdateOrderStatusAsync(id, OrderStatus.Shipped);
+        }
+
+        [HttpPut("deliver/{id}")]
+        public async Task<IActionResult> DeliverOrder(int id)
+        {
+            return await UpdateOrderStatusAsync(id, OrderStatus.Delivered);
+        }
+
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.Id == id);

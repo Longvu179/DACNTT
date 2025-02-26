@@ -58,6 +58,8 @@ namespace MobiSell.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });                
             }
 
+            await _userManager.AddToRoleAsync(user, "User");
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = $"https://localhost:7011/api/Auth/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
             var emailDTO = new EmailDTO()
@@ -144,7 +146,7 @@ namespace MobiSell.Controllers
                     Secure = true,
                     Expires = DateTime.Now.AddDays(3)
                 });
-                await _userManager.AddToRoleAsync(user, "User");
+                
 
                 return Ok(new 
                 { 
@@ -152,6 +154,7 @@ namespace MobiSell.Controllers
                     expiration = token.ValidTo,
                     userId = user.Id,
                     username = user.UserName,
+                    role = userRoles[0],
                     cartId = cart.Id
                 });
             }
@@ -197,6 +200,24 @@ namespace MobiSell.Controllers
             }
 
             return BadRequest("Update profile failed.");
+        }
+
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                return Ok("Change password success.");
+            }
+
+            return BadRequest("Change password failed.");
         }
 
         [HttpGet("confirm-email")]

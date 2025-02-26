@@ -134,9 +134,10 @@ namespace MobiSell.Controllers
                 ReceiverName = name,
                 ReceiverNumber = phoneNumber,
                 OrderDate = DateTime.Now,
-                payment = pm,
+                Payment = pm,
                 IsPaid = false,
                 ShippingAddress = address,
+                Status = OrderStatus.Processing,
                 OrderTotal = 0,
             };
 
