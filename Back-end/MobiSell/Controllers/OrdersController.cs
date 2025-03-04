@@ -31,7 +31,6 @@ namespace MobiSell.Controllers
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -45,7 +44,6 @@ namespace MobiSell.Controllers
         }
         
         [HttpGet("getByUser/{userId}")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUser(string userId)
         {
             var order = await _context.Orders.Where(o => o.UserId.Equals(userId)).OrderByDescending(o => o.OrderDate).ToListAsync();
@@ -61,7 +59,6 @@ namespace MobiSell.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -91,7 +88,6 @@ namespace MobiSell.Controllers
         }
 
         [HttpPatch("updatePayment/{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdatePayment (int id, bool isPaid)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -109,7 +105,6 @@ namespace MobiSell.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             _context.Orders.Add(order);
@@ -120,7 +115,6 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
