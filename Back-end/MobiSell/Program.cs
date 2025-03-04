@@ -94,24 +94,47 @@ using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-    string email = "admin@test.com";
-    string password = "Admin@123";
-    string name = "Admin";
+    // Tạo tài khoản Admin
+    string adminEmail = "admin@test.com";
+    string adminPassword = "Admin@123";
+    string adminName = "Admin";
 
-    if (await userManager.FindByEmailAsync(email) == null)
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
-        var user = new User();
-        user.FullName = name;
-        user.UserName = email;
-        user.Email = email;
-        user.EmailConfirmed = true;
-        user.Address = "";
+        var adminUser = new User
+        {
+            FullName = adminName,
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true,
+            Address = ""
+        };
 
-        await userManager.CreateAsync(user, password);
+        await userManager.CreateAsync(adminUser, adminPassword);
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
 
-        await userManager.AddToRoleAsync(user, "Admin");
+    // Tạo tài khoản User
+    string userEmail = "user@test.com";
+    string userPassword = "User@123";
+    string userName = "User";
+
+    if (await userManager.FindByEmailAsync(userEmail) == null)
+    {
+        var normalUser = new User
+        {
+            FullName = userName,
+            UserName = userEmail,
+            Email = userEmail,
+            EmailConfirmed = true,
+            Address = ""
+        };
+
+        await userManager.CreateAsync(normalUser, userPassword);
+        await userManager.AddToRoleAsync(normalUser, "User");
     }
 }
+
 
 
 app.UseStaticFiles(new StaticFileOptions

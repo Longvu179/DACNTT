@@ -15,63 +15,110 @@ public class RevenueController : ControllerBase
     }
 
     // 1️⃣ Thống kê doanh thu theo ngày
-    [HttpGet("isPaid/daily")]
+    [HttpGet("daily")]
     public async Task<IActionResult> GetDailyRevenue(DateTime date)
     {
-        var revenue = await _context.Orders
-            .Where(o => o.IsPaid && o.OrderDate.Date == date.Date)
-            .SumAsync(o => o.OrderTotal);
+        var paid = await _context.Orders.Where(o => o.IsPaid && o.OrderDate.Date == date.Date).ToListAsync();
+        var revenue = paid.Sum(o => o.OrderTotal);
 
-        return Ok(new { Date = date.ToShortDateString(), Revenue = revenue });
+        var unPaid = await _context.Orders.Where(o => !o.IsPaid && o.OrderDate.Date == date.Date).ToListAsync();
+        var unPaidTotal = unPaid.Sum(o => o.OrderTotal);
+
+        var processing = await _context.Orders.Where(o => o.Status == OrderStatus.Processing && o.OrderDate.Date == date.Date).ToListAsync();
+        var shipped = await _context.Orders.Where(o => o.Status == OrderStatus.Shipped && o.OrderDate.Date == date.Date).ToListAsync();
+        var delivered = await _context.Orders.Where(o => o.Status == OrderStatus.Delivered && o.OrderDate.Date == date.Date).ToListAsync();
+        var cancelled = await _context.Orders.Where(o => o.Status == OrderStatus.Cancelled && o.OrderDate.Date == date.Date).ToListAsync();
+
+        return Ok(new { Date = date.ToShortDateString(), 
+            Revenue = revenue, 
+            numberOfPaid = paid.Count, 
+            UnPaid = unPaidTotal, 
+            numberOfUnPaid = unPaid.Count,
+            Processing = processing.Count,
+            Shipped = shipped.Count,
+            Delivered = delivered.Count,
+            Cancelled = cancelled.Count
+        });
     }
-    [HttpGet("isntPaid/daily")]
-    public async Task<IActionResult> GetDailyRevenueIsntPaid(DateTime date)
-    {
-        var revenue = await _context.Orders
-            .Where(o => !o.IsPaid && o.OrderDate.Date == date.Date)
-            .SumAsync(o => o.OrderTotal);
-
-        return Ok(new { Date = date.ToShortDateString(), Revenue = revenue });
-    }
-
-    // 2️⃣ Thống kê doanh thu theo tháng
-    [HttpGet("isPaid/monthly")]
+    
+    [HttpGet("monthly")]
     public async Task<IActionResult> GetMonthlyRevenue(int year, int month)
     {
-        var revenue = await _context.Orders
+        var paid = await _context.Orders
             .Where(o => o.IsPaid && o.OrderDate.Year == year && o.OrderDate.Month == month)
-            .SumAsync(o => o.OrderTotal);
-
-        return Ok(new { Year = year, Month = month, Revenue = revenue });
-    }
-    [HttpGet("isntPaid/monthly")]
-    public async Task<IActionResult> GetMonthlyRevenueIsntPaid(int year, int month)
-    {
-        var revenue = await _context.Orders
+            .ToListAsync();
+        var revenue = paid.Sum(o => o.OrderTotal);
+        
+        var unPaid = await _context.Orders
             .Where(o => !o.IsPaid && o.OrderDate.Year == year && o.OrderDate.Month == month)
-            .SumAsync(o => o.OrderTotal);
+            .ToListAsync();
+        var unPaidTotal = unPaid.Sum(o => o.OrderTotal);
 
-        return Ok(new { Year = year, Month = month, Revenue = revenue });
+        var processing = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Processing && o.OrderDate.Year == year && o.OrderDate.Month == month)
+            .ToListAsync();
+        var shipped = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Shipped && o.OrderDate.Year == year && o.OrderDate.Month == month)
+            .ToListAsync();
+        var delivered = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Delivered && o.OrderDate.Year == year && o.OrderDate.Month == month)
+            .ToListAsync();
+        var cancelled = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Cancelled && o.OrderDate.Year == year && o.OrderDate.Month == month)
+            .ToListAsync();
+
+        return Ok(new { 
+            Year = year, 
+            Month = month, 
+            Revenue = revenue, 
+            numberOfPaid = paid.Count, 
+            UnPaid = unPaidTotal, 
+            numberOfUnPaid = unPaid.Count,
+            Processing = processing.Count,
+            Shipped = shipped.Count,
+            Delivered = delivered.Count,
+            Cancelled = cancelled.Count
+        });
     }
 
     // 3️⃣ Thống kê doanh thu theo năm
-    [HttpGet("isPaid/yearly")]
+    [HttpGet("yearly")]
     public async Task<IActionResult> GetYearlyRevenue(int year)
     {
-        var revenue = await _context.Orders
+        var paid = await _context.Orders
             .Where(o => o.IsPaid && o.OrderDate.Year == year)
-            .SumAsync(o => o.OrderTotal);
+            .ToListAsync();
+        var revenue = paid.Sum(o => o.OrderTotal);
 
-        return Ok(new { Year = year, Revenue = revenue });
-    }
-    [HttpGet("isntPaid/yearly")]
-    public async Task<IActionResult> GetYearlyRevenueIsntPaid(int year)
-    {
-        var revenue = await _context.Orders
+        var unPaid = await _context.Orders
             .Where(o => !o.IsPaid && o.OrderDate.Year == year)
-            .SumAsync(o => o.OrderTotal);
+            .ToListAsync();
+        var unPaidTotal = unPaid.Sum(o => o.OrderTotal);
 
-        return Ok(new { Year = year, Revenue = revenue });
+        var processing = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Processing && o.OrderDate.Year == year)
+            .ToListAsync();
+        var shipped = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Shipped && o.OrderDate.Year == year)
+            .ToListAsync();
+        var delivered = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Delivered && o.OrderDate.Year == year)
+            .ToListAsync();
+        var cancelled = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Cancelled && o.OrderDate.Year == year)
+            .ToListAsync();
+
+        return Ok(new { 
+            Year = year, 
+            Revenue = revenue, 
+            numberOfPaid = paid.Count, 
+            UnPaid = unPaidTotal, 
+            numberOfUnPaid = unPaid.Count,
+            Processing = processing.Count,
+            Shipped = shipped.Count,
+            Delivered = delivered.Count,
+            Cancelled = cancelled.Count
+        });
     }
 
     // 4️⃣ Thống kê doanh thu trong khoảng thời gian
@@ -83,10 +130,66 @@ public class RevenueController : ControllerBase
             return BadRequest("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.");
         }
 
-        var revenue = await _context.Orders
+        var paid = await _context.Orders
             .Where(o => o.IsPaid && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
-            .SumAsync(o => o.OrderTotal);
+            .ToListAsync();
+        var revenue = paid.Sum(o => o.OrderTotal);
 
-        return Ok(new { StartDate = startDate.ToShortDateString(), EndDate = endDate.ToShortDateString(), Revenue = revenue });
+        var unPaid = await _context.Orders
+            .Where(o => o.IsPaid && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
+            .ToListAsync();
+        var unPaidTotal = unPaid.Sum(o => o.OrderTotal);
+
+        var processing = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Processing && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
+            .ToListAsync();
+        var shipped = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Shipped && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
+            .ToListAsync();
+        var delivered = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Delivered && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
+            .ToListAsync();
+        var cancelled = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Cancelled && o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date)
+            .ToListAsync();
+
+        return Ok(new { 
+            StartDate = startDate.ToShortDateString(), 
+            EndDate = endDate.ToShortDateString(),
+            Revenue = revenue, 
+            numberOfPaid = paid.Count, 
+            UnPaid = unPaidTotal, 
+            numberOfUnPaid = unPaid.Count,
+            Processing = processing.Count,
+            Shipped = shipped.Count,
+            Delivered = delivered.Count,
+            Cancelled = cancelled.Count
+        });
+    }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllRevenue()
+    {
+        var paid = await _context.Orders.Where(o => o.IsPaid).ToListAsync();
+        var revenue = paid.Sum(o => o.OrderTotal);
+
+        var unPaid = await _context.Orders.Where(o => !o.IsPaid).ToListAsync();
+        var unPaidTotal = unPaid.Sum(o => o.OrderTotal);
+
+        var processing = await _context.Orders.Where(o => o.Status == OrderStatus.Processing).ToListAsync();
+        var shipped = await _context.Orders.Where(o => o.Status == OrderStatus.Shipped).ToListAsync();
+        var delivered = await _context.Orders.Where(o => o.Status == OrderStatus.Delivered).ToListAsync();
+        var cancelled = await _context.Orders.Where(o => o.Status == OrderStatus.Cancelled).ToListAsync();
+
+        return Ok(new { 
+            Revenue = revenue, 
+            numberOfPaid = paid.Count, 
+            UnPaid = unPaidTotal, 
+            numberOfUnPaid = unPaid.Count,
+            Processing = processing.Count,
+            Shipped = shipped.Count,
+            Delivered = delivered.Count,
+            Cancelled = cancelled.Count
+        });
     }
 }

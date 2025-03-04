@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +26,15 @@ namespace MobiSell.Controllers
             _vnPayService = vnPayService;
         }
 
-        // GET: api/Cart_Item
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Cart_Item>>> GetCart_Items(int cartId)
         {
             return await _context.Cart_Items.Where(i => i.CartId == cartId).ToListAsync();
         }
+
         [HttpGet("getSelected")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Cart_Item>>> GetCart_Item_Selected(int cartId)
         {
             return await _context.Cart_Items.Where(i => i.CartId == cartId & i.IsSelected == true).ToListAsync();
@@ -39,6 +42,7 @@ namespace MobiSell.Controllers
 
         // GET: api/Cart_Item/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Cart_Item>> GetCart_Item(int id)
         {
             var cart_Item = await _context.Cart_Items.FindAsync(id);
@@ -52,6 +56,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutCart_Item(int id, int amount)
         {
             var cart_Item = await _context.Cart_Items.FindAsync(id);
@@ -91,6 +96,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPut("select/{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateSelect(int id, bool select)
         {
             var cart_Item = await _context.Cart_Items.FindAsync(id);
@@ -105,20 +111,21 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCart_Item(int id)
-        {
-            var cart_Item = await _context.Cart_Items.FindAsync(id);
-            if (cart_Item == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //[Authorize]
+        //public async Task<IActionResult> DeleteCart_Item(int id)
+        //{
+        //    var cart_Item = await _context.Cart_Items.FindAsync(id);
+        //    if (cart_Item == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Cart_Items.Remove(cart_Item);
-            await _context.SaveChangesAsync();
+        //    _context.Cart_Items.Remove(cart_Item);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool Cart_ItemExists(int id)
         {
@@ -126,7 +133,8 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost("Purchase")]
-        public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm, int product_SKUId, int quantity)
+        [Authorize]
+        public async Task<IActionResult> PurchaseCart(string userId, int cartId, string name, string phoneNumber, string address, PaymentMethod pm, int product_SKUId, int quantity, string returnUrl)
         {   
             var order = new Order
             {
@@ -192,7 +200,8 @@ namespace MobiSell.Controllers
                     OrderType = "billpayment",
                     OrderDescription = "Thanh toán đơn hàng",
                     Amount = order.OrderTotal,
-                    Name = name
+                    Name = name,
+                    ReturnUrl = returnUrl
                 };
 
                 var url = _vnPayService.CreatePaymentUrl(request, HttpContext);

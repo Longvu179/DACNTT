@@ -35,14 +35,14 @@ namespace MobiSell.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model, string url)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User already exists!" });
+                return BadRequest( new { Status = "Error", message = "User already exists!" });
             var emailExists = await _userManager.FindByEmailAsync(model.Email);
             if (emailExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "Email already exists!" });
+                return BadRequest( new { Status = "Error", message = "Email already exists!" });
 
             var user = new User()
             {
@@ -55,13 +55,13 @@ namespace MobiSell.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });                
+                return BadRequest( new { Status = "Error", message = "User creation failed! Please check user details and try again." });                
             }
 
             await _userManager.AddToRoleAsync(user, "User");
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"https://localhost:7011/api/Auth/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var confirmationLink = $"{url}?userId={user.Id}&token={Uri.EscapeDataString(token)}";
             var emailDTO = new EmailDTO()
             {
                 To = user.Email,
@@ -90,13 +90,13 @@ namespace MobiSell.Controllers
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user == null)
             {
-                return Unauthorized("Invalid username or password.");
+                return Unauthorized( new { message = "Invalid username or password." });
             }
 
             // Kiểm tra xem email đã được xác nhận chưa
             if (!user.EmailConfirmed)
             {
-                return Unauthorized("Please confirm your email before logging in.");
+                return Unauthorized(new { message = "Please confirm your email before logging in." });
             }
 
             if (await _userManager.CheckPasswordAsync(user, model.Password))
@@ -147,7 +147,6 @@ namespace MobiSell.Controllers
                     Expires = DateTime.Now.AddDays(3)
                 });
                 
-
                 return Ok(new 
                 { 
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -162,6 +161,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
@@ -169,6 +169,7 @@ namespace MobiSell.Controllers
 
         [HttpGet]
         [Route("profile")]
+        [Authorize]
         public async Task<IActionResult> Profile(string userId)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -181,12 +182,13 @@ namespace MobiSell.Controllers
         }
 
         [HttpPut("{userId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateProfile(string userId, [FromBody] UserDTO user)
         {
             var currentUser = await _userManager.FindByIdAsync(userId);
             if (currentUser == null)
             {
-                return NotFound("User not found.");
+                return NotFound(new { message = "User not found." });
             }
 
             currentUser.PhoneNumber = user.PhoneNumber;
@@ -196,51 +198,106 @@ namespace MobiSell.Controllers
             var result = await _userManager.UpdateAsync(currentUser);
             if (result.Succeeded)
             {
-                return Ok("Update profile success.");
+                return Ok(new { success = "Update profile success." });
             }
 
-            return BadRequest("Update profile failed.");
+            return BadRequest(new { message = "Update profile failed." });
         }
-
+        
         [HttpPut("change-password")]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
             {
-                return NotFound("User not found.");
+                return NotFound(new { message = "User not found." });
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                return Ok("Change password success.");
+                return Ok(new { success = "Change password success." });
             }
 
-            return BadRequest("Change password failed.");
+            return BadRequest(new { message = "Change password failed." });
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(string email, string url)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            Console.WriteLine(token);
+            var confirmationLink = $"{url}?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var emailDTO = new EmailDTO()
+            {
+                To = user.Email,
+                Subject = "Reset Your Password",
+                Body = "<p>Reset your password by clicking the link below.</p> " +
+                        $"<a href='{confirmationLink}'>Click here to reset your password</a>"
+            };
+
+            try
+            {
+                _emailService.SendEmail(emailDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error sending email: " + ex.Message);
+            }
+
+            return Ok(new { success = "Please check your email to reset password." });
+        }
+
+        [HttpGet("reset-password")]
+        public async Task<IActionResult> ResetPassword(string userId, string token, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound( new { message = "User not found." });
+            }
+
+            var decodedToken = Uri.UnescapeDataString(token);
+            Console.WriteLine(decodedToken);
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+
+            if (result.Succeeded)
+            {
+                return Ok( new { success = "Reset password success." });
+            }
+
+            return BadRequest(new { message = result.Errors.Select(e => e.Description) });
+        }
+
 
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             if (userId == null || token == null)
             {
-                return BadRequest("Thiếu thông tin xác thực.");
+                return BadRequest(new { message = "Thiếu thông tin xác thực." });
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound("Người dùng không tồn tại.");
+                return NotFound(new { message = "Người dùng không tồn tại." });
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                return Ok("Email đã được xác thực thành công.");
+                return Ok(new { success = "Email đã được xác thực thành công." });
             }
 
-            return BadRequest("Xác thực email thất bại.");
+            return BadRequest(new { message = "Xác thực email thất bại." });
         }
 
     }

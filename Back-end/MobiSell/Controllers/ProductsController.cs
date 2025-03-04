@@ -81,6 +81,7 @@ namespace MobiSell.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
             product.DayCreate = DateTime.Now;
@@ -92,6 +93,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -118,6 +120,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpGet("wishlist/{userId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Product>>> GetWishList(string userId)
         {
             var wishList = await _context.WishLists.Where(w => w.UserId == userId).ToListAsync();
@@ -131,6 +134,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost("wishlist")]
+        [Authorize]
         public async Task<ActionResult<WishList>> WishList(string userId, int productId)
         {
             var wishList = await _context.WishLists.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);

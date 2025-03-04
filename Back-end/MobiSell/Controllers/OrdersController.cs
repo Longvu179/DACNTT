@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,12 @@ namespace MobiSell.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders.OrderByDescending(o => o.OrderDate).ToListAsync();
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -43,9 +45,10 @@ namespace MobiSell.Controllers
         }
         
         [HttpGet("getByUser/{userId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUser(string userId)
         {
-            var order = await _context.Orders.Where(o => o.UserId.Equals(userId)).ToListAsync();
+            var order = await _context.Orders.Where(o => o.UserId.Equals(userId)).OrderByDescending(o => o.OrderDate).ToListAsync();
 
             if (order == null)
             {
@@ -58,6 +61,7 @@ namespace MobiSell.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -86,9 +90,26 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
+        [HttpPatch("updatePayment/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePayment (int id, bool isPaid)
+        {
+            var order = await _context.Orders.FindAsync(id);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng." });
+
+            order.IsPaid = isPaid;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Cập nhật trạng thái thanh toán thành công." });
+        }
+
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             _context.Orders.Add(order);
@@ -99,6 +120,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -138,7 +160,13 @@ namespace MobiSell.Controllers
             order.Status = newStatus;
 
             if (newStatus == OrderStatus.Cancelled)
+            {
+                order.IsPaid = false;
                 order.CancelDate = DateTime.UtcNow;
+            }
+                
+            if (newStatus == OrderStatus.Delivered)
+                order.IsPaid = true;
 
             await _context.SaveChangesAsync();
 

@@ -22,7 +22,7 @@ namespace MobiSell.Services
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
             var tick = DateTime.Now.Ticks.ToString();
             var pay = new VNPayLibrary();
-            var urlCallBack = _config["VnPay:ReturnUrl"];
+            var urlCallBack = model.ReturnUrl;
 
             pay.AddRequestData("vnp_Version", "2.1.0");
             pay.AddRequestData("vnp_Command", "pay");

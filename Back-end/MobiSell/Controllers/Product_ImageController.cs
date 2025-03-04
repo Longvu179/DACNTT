@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +62,7 @@ namespace MobiSell.Controllers
         // PUT: api/Product_Image/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProduct_Image(int id, 
             [FromForm] Product_Image product_Image,
             [FromForm] IEnumerable<IFormFile> images)
@@ -98,6 +100,7 @@ namespace MobiSell.Controllers
         // POST: api/Product_Image
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product_Image>> PostProduct_Image(List<IFormFile> images, int productId)
         {
             var imageNames = await _fileService.SaveFilesAsync(images, productId);
@@ -119,6 +122,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Product_Image/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct_Image(int id)
         {
             var product_Image = await _context.Product_Images.FindAsync(id);

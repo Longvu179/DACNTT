@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -62,6 +63,7 @@ namespace MobiSell.Controllers
         // PUT: api/Product_SKU/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProduct_SKU(int id,
             [FromForm] Product_SKU product_SKU,
             [FromForm] IEnumerable<IFormFile> images)
@@ -107,6 +109,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product_SKU>> PostProduct_SKU(
             [FromForm] Product_SKU product_SKU,
             [FromForm] IEnumerable<IFormFile> images)
@@ -121,6 +124,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct_SKU(int id)
         {
             var product_SKU = await _context.Product_SKUs.FindAsync(id);
@@ -141,6 +145,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost("addToCart")]
+        [Authorize]
         public async Task<ActionResult<Cart_Item>> AddToCart(int cartId, int product_SKUId)
         {
             var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);
@@ -171,6 +176,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpDelete("removeFromCart")]
+        [Authorize]
         public async Task<IActionResult> RemoveFromCart(int cartId, int product_SKUId)
         {
             var item = await _context.Cart_Items.FirstOrDefaultAsync(i => i.CartId == cartId && i.Product_SKUId == product_SKUId);

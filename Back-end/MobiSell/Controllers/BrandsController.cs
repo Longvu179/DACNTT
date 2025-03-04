@@ -46,6 +46,7 @@ namespace MobiSell.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutBrand(int id, Brand brand)
         {
             if (id != brand.Id)
@@ -88,6 +89,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Brands/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBrand(int id)
         {
             var brand = await _context.Brands.FindAsync(id);

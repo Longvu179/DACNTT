@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -24,6 +25,7 @@ namespace MobiSell.Controllers
 
         // GET: api/Order_Item
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order_Item>>> GetOrder_Items()
         {
             return await _context.Order_Items.ToListAsync();
@@ -31,6 +33,7 @@ namespace MobiSell.Controllers
 
         // GET: api/Order_Item/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order_Item>> GetOrder_Item(int id)
         {
             var order_Item = await _context.Order_Items.FindAsync(id);
@@ -43,6 +46,7 @@ namespace MobiSell.Controllers
             return order_Item;
         }
         [HttpGet("getByOrder/{orderId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order_Item>>> GetByOrderId(int orderId)
         {
             var order_Item = await _context.Order_Items.Where(o => o.OrderId.Equals(orderId)).ToListAsync();
@@ -58,6 +62,7 @@ namespace MobiSell.Controllers
         // PUT: api/Order_Item/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOrder_Item(int id, Order_Item order_Item)
         {
             if (id != order_Item.Id)
@@ -89,6 +94,7 @@ namespace MobiSell.Controllers
         // POST: api/Order_Item
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Order_Item>> PostOrder_Item(Order_Item order_Item)
         {
             _context.Order_Items.Add(order_Item);
@@ -99,6 +105,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Order_Item/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrder_Item(int id)
         {
             var order_Item = await _context.Order_Items.FindAsync(id);
