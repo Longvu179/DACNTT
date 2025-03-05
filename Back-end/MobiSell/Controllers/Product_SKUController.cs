@@ -87,13 +87,18 @@ namespace MobiSell.Controllers
             default_product_SKU.LastUpdatedAt = DateTime.UtcNow;
 
 
-            if(default_product_SKU.ImageName != images.FirstOrDefault().FileName) 
+            if (images != null && images.Any())
             {
-                var imageNames = await _fileService.SaveFilesAsync(images, default_product_SKU.ProductId);
-                await _fileService.DeleteFileAsync(default_product_SKU.ProductId + "/" + default_product_SKU.ImageName);
-                default_product_SKU.ImageName = imageNames[0];
+                var newImage = images.FirstOrDefault();
+
+                if (newImage != null && default_product_SKU.ImageName != newImage.FileName)
+                {
+                    var imageNames = await _fileService.SaveFilesAsync(images, default_product_SKU.ProductId);
+                    await _fileService.DeleteFileAsync(default_product_SKU.ProductId + "/" + default_product_SKU.ImageName);
+                    default_product_SKU.ImageName = imageNames[0];
+                }
             }
-            
+
             _context.Entry(default_product_SKU).State = EntityState.Modified;
 
             try

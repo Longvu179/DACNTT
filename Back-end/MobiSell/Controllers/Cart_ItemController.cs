@@ -111,21 +111,21 @@ namespace MobiSell.Controllers
             return NoContent();
         }
 
-        //[HttpDelete("{id}")]
-        //[Authorize]
-        //public async Task<IActionResult> DeleteCart_Item(int id)
-        //{
-        //    var cart_Item = await _context.Cart_Items.FindAsync(id);
-        //    if (cart_Item == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteCart_Item(int id)
+        {
+            var cart_Item = await _context.Cart_Items.FindAsync(id);
+            if (cart_Item == null)
+            {
+                return NotFound();
+            }
 
-        //    _context.Cart_Items.Remove(cart_Item);
-        //    await _context.SaveChangesAsync();
+            _context.Cart_Items.Remove(cart_Item);
+            await _context.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         private bool Cart_ItemExists(int id)
         {
@@ -144,6 +144,7 @@ namespace MobiSell.Controllers
                 OrderDate = DateTime.Now,
                 Payment = pm,
                 IsPaid = false,
+                IsRate = false,
                 ShippingAddress = address,
                 Status = OrderStatus.Processing,
                 OrderTotal = 0,

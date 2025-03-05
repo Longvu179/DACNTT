@@ -41,18 +41,15 @@ namespace MobiSell.Controllers
 
             return review;
         }
-        
+
         [HttpGet("getByProduct/{productId}")]
         public async Task<ActionResult<IEnumerable<Review>>> GetByProduct(int productId)
         {
-            var review = await _context.Reviews.Where(w => w.ProductId == productId).ToListAsync();
+            var reviews = await _context.Reviews
+                .Where(w => w.ProductId == productId).OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
 
-            if (review == null)
-            {
-                return NotFound();
-            }
-
-            return review;
+            return Ok(reviews);
         }
 
         [HttpPut("{id}")]
@@ -85,12 +82,33 @@ namespace MobiSell.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> PostReview(Review review)
+        public async Task<ActionResult<Review>> PostReviews(List<Review> reviews)
         {
-            _context.Reviews.Add(review);
+            if (reviews == null || reviews.Count == 0)
+            {
+                return BadRequest("Danh sách đánh giá không hợp lệ.");
+            }
+            var item = await _context.Order_Items.FindAsync(reviews[0].Order_ItemId);
+            if(item != null)
+            {
+                var order = await _context.Orders.FindAsync(item.OrderId);
+                if (order != null)
+                {
+                    order.IsRate = true;
+                    _context.Entry(order).State = EntityState.Modified;
+                }
+            }
+
+            foreach (var review in reviews)
+            {
+                review.CreatedAt = DateTime.Now;
+                review.LastUpdatedAt = DateTime.Now;
+            }
+
+            await _context.Reviews.AddRangeAsync(reviews);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReview", new { id = review.Id }, review);
+            return CreatedAtAction(nameof(PostReviews), new { success = "Đánh giá đã được lưu thành công." });
         }
 
         // DELETE: api/Reviews/5

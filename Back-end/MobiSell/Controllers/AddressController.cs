@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace MobiSell.Controllers
 
         // GET: api/Addresses/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Address>> GetAddress(int id)
         {
             var address = await _context.Address.FindAsync(id);
@@ -43,6 +45,7 @@ namespace MobiSell.Controllers
         }
         
         [HttpGet("getByUser/{userId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Address>>> GetByUser(string userId)
         {
             var address = await _context.Address.Where(a => a.UserId.Equals(userId)).ToListAsync();
@@ -58,6 +61,7 @@ namespace MobiSell.Controllers
         // PUT: api/Addresses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutAddress(int id, Address address)
         {
             if (id != address.Id)
@@ -87,6 +91,7 @@ namespace MobiSell.Controllers
         }
 
         [HttpPatch("setDefault/{id}")]
+        [Authorize]
         public async Task<IActionResult> SetDefault(int id, string userId)
         {
             var addresses = await _context.Address.Where(a => a.UserId.Equals(userId)).ToListAsync();
@@ -115,8 +120,13 @@ namespace MobiSell.Controllers
         // POST: api/Addresses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Address>> PostAddress(Address address)
         {
+            var temp = await _context.Address.FirstOrDefaultAsync(a => a.UserId.Equals(address.UserId));
+            if (temp == null) {
+                address.Default = true;
+            }
             _context.Address.Add(address);
             await _context.SaveChangesAsync();
 
@@ -125,6 +135,7 @@ namespace MobiSell.Controllers
 
         // DELETE: api/Addresses/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteAddress(int id)
         {
             var address = await _context.Address.FindAsync(id);
