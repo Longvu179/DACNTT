@@ -165,6 +165,8 @@ namespace MobiSell.Controllers
                     Quantity = quantity,
                     Price = product.FinalPrice,
                 };
+                product.Quantity -= quantity;
+                product.Sold += quantity;
                 _context.Order_Items.Add(orderItem);
                 await _context.SaveChangesAsync();
             }

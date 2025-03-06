@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\cart_itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\cart_itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\cart_itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\cart_itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\product_skucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -33,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\controllers\\revenuecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -89,10 +93,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\models\\brand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:models\\brand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{92E24CC3-A07A-44B1-ACF7-5E8EB569F6C3}|MobiSell.csproj|d:\\th\u01B0 mu\u0323c m\u01A1\u0301i\\duancntt\\back-end\\mobisell\\models\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -222,35 +222,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 160,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AddressController.cs",
-              "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\AddressController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AddressController.cs",
-              "ToolTip": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\AddressController.cs",
-              "RelativeToolTip": "Controllers\\AddressController.cs",
-              "ViewState": "AQIAAGoAAAAAAAAAAAAgwHoAAAATAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-01T05:37:32.707Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Cart_ItemController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\Cart_ItemController.cs",
               "RelativeDocumentMoniker": "Controllers\\Cart_ItemController.cs",
               "ToolTip": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\Cart_ItemController.cs",
               "RelativeToolTip": "Controllers\\Cart_ItemController.cs",
-              "ViewState": "AQIAAHkAAAAAAAAAAAAcwIgAAAC8AAAA",
+              "ViewState": "AQIAAH8AAAAAAAAAAAAmwIgAAABFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-08T09:15:14.565Z"
+              "WhenOpened": "2025-01-08T09:15:14.565Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "OrdersController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\OrdersController.cs",
               "RelativeDocumentMoniker": "Controllers\\OrdersController.cs",
@@ -262,7 +251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "Product_ImageController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\Product_ImageController.cs",
               "RelativeDocumentMoniker": "Controllers\\Product_ImageController.cs",
@@ -274,7 +263,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Product_SKUController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\Product_SKUController.cs",
               "RelativeDocumentMoniker": "Controllers\\Product_SKUController.cs",
@@ -286,7 +275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "Order_ItemController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\Order_ItemController.cs",
               "RelativeDocumentMoniker": "Controllers\\Order_ItemController.cs",
@@ -298,7 +287,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "VNPayController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\VNPayController.cs",
               "RelativeDocumentMoniker": "Controllers\\VNPayController.cs",
@@ -311,6 +300,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAQAAAAAAAAAAAAewAwAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-07T09:24:02.794Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AddressController.cs",
+              "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\AddressController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AddressController.cs",
+              "ToolTip": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\AddressController.cs",
+              "RelativeToolTip": "Controllers\\AddressController.cs",
+              "ViewState": "AQIAACoAAAAAAAAAAAAqwDUAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-01T05:37:32.707Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Order.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Models\\Order.cs",
@@ -322,7 +337,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Review.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Review.cs",
               "RelativeDocumentMoniker": "Models\\Review.cs",
@@ -330,12 +345,11 @@
               "RelativeToolTip": "Models\\Review.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAqwAIAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-08T03:03:55.847Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-08T03:03:55.847Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "RevenueController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\RevenueController.cs",
               "RelativeDocumentMoniker": "Controllers\\RevenueController.cs",
@@ -347,7 +361,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "ReviewsController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\ReviewsController.cs",
               "RelativeDocumentMoniker": "Controllers\\ReviewsController.cs",
@@ -359,7 +373,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "Controllers\\ProductsController.cs",
@@ -383,7 +397,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "MobiSellContext.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Data\\MobiSellContext.cs",
               "RelativeDocumentMoniker": "Data\\MobiSellContext.cs",
@@ -395,7 +409,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Product_SKU.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Product_SKU.cs",
               "RelativeDocumentMoniker": "Models\\Product_SKU.cs",
@@ -407,7 +421,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "Product.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Product.cs",
               "RelativeDocumentMoniker": "Models\\Product.cs",
@@ -419,7 +433,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "Order_Item.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Order_Item.cs",
               "RelativeDocumentMoniker": "Models\\Order_Item.cs",
@@ -431,7 +445,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "LocationsController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\LocationsController.cs",
               "RelativeDocumentMoniker": "Controllers\\LocationsController.cs",
@@ -443,7 +457,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -455,7 +469,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "Address.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Address.cs",
               "RelativeDocumentMoniker": "Models\\Address.cs",
@@ -467,7 +481,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "RegisterModel.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\RegisterModel.cs",
               "RelativeDocumentMoniker": "Models\\RegisterModel.cs",
@@ -479,7 +493,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "BrandsController.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Controllers\\BrandsController.cs",
               "RelativeDocumentMoniker": "Controllers\\BrandsController.cs",
@@ -491,7 +505,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "Brand.cs",
               "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Models\\Brand.cs",
               "RelativeDocumentMoniker": "Models\\Brand.cs",
@@ -500,18 +514,6 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-07T08:44:25.902Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\Th\u01B0 mu\u0323c m\u01A1\u0301i\\DuAnCNTT\\Back-end\\MobiSell\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAEcAAAAAAAAAAAAmwHgAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-07T09:24:02.794Z"
             },
             {
               "$type": "Document",
