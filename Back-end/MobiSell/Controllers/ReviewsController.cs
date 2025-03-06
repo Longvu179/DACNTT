@@ -51,16 +51,37 @@ namespace MobiSell.Controllers
 
             return Ok(reviews);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReview(int id, Review review)
+        [HttpGet("getByOrder/{orderId}")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetByOrder(int orderId)
         {
-            if (id != review.Id)
+            var reviews = await _context.Reviews.Where(w => w.OrderId == orderId).ToListAsync();
+            return Ok(reviews);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateReviews([FromBody] List<Review> reviews)
+        {
+            if (reviews == null)
             {
-                return BadRequest();
+                return BadRequest("Danh sách đánh giá không hợp lệ.");
             }
 
-            _context.Entry(review).State = EntityState.Modified;
+            foreach (var review in reviews)
+            {
+                var existingReview = await _context.Reviews
+                    .FirstOrDefaultAsync(r => r.Id == review.Id);
+
+                if (existingReview == null)
+                {
+                    return NotFound($"Không tìm thấy đánh giá với ID: {review.Id}");
+                }
+
+                // Cập nhật thông tin đánh giá
+                existingReview.Rating = review.Rating;
+                existingReview.Comment = review.Comment;
+
+                _context.Reviews.Update(existingReview);
+            }
 
             try
             {
@@ -68,17 +89,10 @@ namespace MobiSell.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReviewExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, "Lỗi khi cập nhật đánh giá.");
             }
 
-            return NoContent();
+            return Ok("Đánh giá đã được cập nhật thành công.");
         }
 
         [HttpPost]
@@ -88,15 +102,12 @@ namespace MobiSell.Controllers
             {
                 return BadRequest("Danh sách đánh giá không hợp lệ.");
             }
-            var item = await _context.Order_Items.FindAsync(reviews[0].Order_ItemId);
-            if(item != null)
+            
+            var order = await _context.Orders.FindAsync(reviews[0].OrderId);
+            if (order != null)
             {
-                var order = await _context.Orders.FindAsync(item.OrderId);
-                if (order != null)
-                {
-                    order.IsRate = true;
-                    _context.Entry(order).State = EntityState.Modified;
-                }
+                order.IsRate = true;
+                _context.Entry(order).State = EntityState.Modified;
             }
 
             foreach (var review in reviews)
